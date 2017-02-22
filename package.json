@@ -1,0 +1,19 @@
+{
+  "name": "val",
+  "version": "1.0.0",
+  "description": "file follower that is capable of following a file even when it is momentarily deleted or completely overwritten",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "kefir",
+    "node",
+    "events"
+  ],
+  "author": "functor-soup",
+  "license": "MIT",
+  "dependencies": {
+    "kefir": "^3.7.1"
+  }
+}
