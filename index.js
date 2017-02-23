@@ -1,6 +1,8 @@
 const fs = require('fs');
 const k = require('kefir');
 
+const streamLog_name = "merged stream";
+
 
 function val_pollForFileName_stream(fileName, interval) {
     return k.fromPoll(interval, () => fs.existsSync(fileName))
@@ -64,21 +66,23 @@ function val_mergedStream(fileName) {
 // main playground, applies callback to file diff (growth)
 // in case of deletion, calls in a stream of polled file-existence-checking on termination
 //  of which recursively starts up the function
-function val(fileName, callback, interval) {
+function val(fileName, callback, interval, debugging) {
+
     val_mergedStream(fileName)
         .onValue(x => {
-            x.scan((x, y) => x + y, "")
-                .onValue(callback);
+            const y = x.scan((x, y) => x + y, "")
+	               .onValue(callback);
+
+	    if(debugging) { y.log(streamLog_name); }
         })
         .onEnd(function(x) {
-            console.log(x+" got deleted")
+            //console.log(x+" got deleted")
             val_pollForFileName_stream(fileName, interval)
                 .onEnd(x => val(fileName, callback, interval));
         })
+
 }
 
-//val("chicken.txt", console.log, 1000);
-//
 
 module.exports = {
     val: val
