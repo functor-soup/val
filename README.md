@@ -9,7 +9,7 @@
 
 ### Show me how it works and what to expect
 
-'''javascript
+```javascript
 
 // touch chicken.txt 
 >> val("chicken.txt", console.log, 1000)
@@ -23,7 +23,7 @@ output>> chicken.txt has been deleted  // program doesn't exit polling starts
 // echo "beef fried rice" >> chicken.txt
 output>> beef fried rice  
 
-'''
+```
 
 ### Pending work
  - Make sure it works in non-favourable conditions
