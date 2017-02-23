@@ -2,6 +2,14 @@ const fs = require('fs');
 const k = require('kefir');
 
 
+function val_pollForFileName_stream(fileName, interval) {
+    return k.fromPoll(interval, () => fs.existsSync(fileName))
+        .takeWhile(x => x == false)
+}
+
+
+// String -> Int -> Int -> ReadStream
+// [convenience function]
 function createFileReadStream(fileName, start, end) {
     return k.fromEvents(fs.createReadStream(fileName, {
         start: start,
@@ -10,7 +18,9 @@ function createFileReadStream(fileName, start, end) {
     }), 'data');
 }
 
-// don't think I need this needs to be put into queue for considered for deletion
+
+// String -> Stream
+// [in queue for considered for deletion]
 function val_checkForFileDeletion_stream(fileName) {
     return k.fromEvents(fs.watch(fileName), 'change')
         .map(x => fs.existsSync(fileName))
@@ -41,19 +51,19 @@ function val_fileContentChange_stream(fileName) {
 }
 
 
-// don't think I really need this .. needs to be considered for deletion
+// String -> Stream
+// [in queue to be considered for deletion]
+// creates stream of read streams limited by the stream for file deletion events
 function val_mergedStream(fileName) {
     return val_fileContentChange_stream(fileName)
         .takeUntilBy(val_checkForFileDeletion_stream(fileName));
 }
 
-function val_pollForFileName_stream(fileName, interval) {
-    return k.fromPoll(interval, () => fs.existsSync(fileName))
-        .takeWhile(x => x == false)
-}
 
-
-// 
+// String -> Function -> Int -> Side Effect  
+// main playground, applies callback to file diff (growth)
+// in case of deletion, calls in a stream of polled file-existence-checking on termination
+//  of which recursively starts up the function
 function val(fileName, callback, interval) {
     val_mergedStream(fileName)
         .onValue(x => {
@@ -61,9 +71,9 @@ function val(fileName, callback, interval) {
                 .onValue(callback);
         })
         .onEnd(function(x) {
-            console.log("I got deleted")
-	    val_pollForFileName_stream(fileName, interval)
-	       .onEnd(x => val(fileName, callback, interval));
+            console.log(x+" got deleted")
+            val_pollForFileName_stream(fileName, interval)
+                .onEnd(x => val(fileName, callback, interval));
         })
 }
 
