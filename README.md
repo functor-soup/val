@@ -29,6 +29,8 @@ output>> beef fried rice
  - Make sure it works in non-favourable conditions
  - Testing
  - The output has yet to be worked on in terms of line breaks/other what-nots
+ - Stress testing to check if it performs as well as it should, not sure if the recursive
+   call is tail recursive sooooooo gotta check that out as well
 
 #### The name of this library
  - It comes from the Malayalam (South Indian language) word for tail
