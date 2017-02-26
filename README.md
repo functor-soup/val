@@ -25,6 +25,10 @@ output>> beef fried rice
 
 ```
 
+### Show me how to use it
+
+Check out the `example` subdirectory to look at how to log postfix logfile to mongo (make sure you have read permission to the logfile)
+
 ### Pending work
  - Make sure it works in non-favourable conditions
  - Testing
